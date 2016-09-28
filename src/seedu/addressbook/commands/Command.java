@@ -5,6 +5,7 @@ import seedu.addressbook.common.Range;
 import seedu.addressbook.data.AddressBook;
 import seedu.addressbook.data.person.ReadOnlyPerson;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static seedu.addressbook.ui.Gui.DISPLAYED_INDEX_OFFSET;
@@ -70,12 +71,18 @@ public abstract class Command {
     }
     
     /**
-     * Extracts the the target person in the last shown list from the given arguments.
+     * Extracts the the target people in the last shown list from the given arguments.
      *
-     * @throws IndexOutOfBoundsException if the target index is out of bounds of the last viewed listing
+     * @throws IndexOutOfBoundsException if the range is out of bounds of the last viewed listing
      */
-    protected ReadOnlyPerson getTargetPersonRange() throws IndexOutOfBoundsException {
-        return relevantPersons.get(getTargetIndex() - DISPLAYED_INDEX_OFFSET);
+    protected ArrayList<ReadOnlyPerson> getTargetPersonRange() throws IndexOutOfBoundsException {
+        ArrayList<ReadOnlyPerson> peopleToDelete = new ArrayList<>();
+        Range range = getTargetRange();
+        for (int i = range.getStartIndex(); i < range.getEndIndex() + 1; ++i) {
+            ReadOnlyPerson personToDelete = relevantPersons.get(i - DISPLAYED_INDEX_OFFSET);
+            peopleToDelete.add(personToDelete);
+        }
+        return peopleToDelete;
     }
 
     public int getTargetIndex() {

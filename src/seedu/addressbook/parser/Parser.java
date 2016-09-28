@@ -16,7 +16,7 @@ import static seedu.addressbook.common.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
 public class Parser {
 
     public static final Pattern PERSON_INDEX_ARGS_FORMAT = Pattern.compile("(?<targetIndex>.+)");
-    public static final Pattern PERSON_RANGE_ARGS_FORMAT = Pattern.compile("(?<startIndex>.+)\\.\\.\\.(?<endIndex>.+)");
+    public static final Pattern PERSON_RANGE_ARGS_FORMAT = Pattern.compile("(?<startIndex>\\d+) (?<endIndex>\\d+)");
 
     public static final Pattern KEYWORDS_ARGS_FORMAT =
             Pattern.compile("(?<keywords>\\S+(?:\\s+\\S+)*)"); // one or more keywords separated by whitespace
@@ -197,7 +197,7 @@ public class Parser {
                 final int targetIndex = parseArgsAsDisplayedIndex(args);
                 return new DeleteCommand(targetIndex);
             }
-        } catch (ParseException | NumberFormatException e) {
+        } catch (ParseException | NumberFormatException | IllegalAccessException e) {
             return new IncorrectCommand(String.format(MESSAGE_INVALID_COMMAND_FORMAT, DeleteCommand.MESSAGE_USAGE));
         }
     }
@@ -265,17 +265,24 @@ public class Parser {
     }
     
     /**
-     * Parses the given arguments string as a single index number.
+     * Parses the given arguments string as an index range.
      *
      * @param args arguments string to parse as a range
-     * @return the parsed index number
+     * @return the parsed index range
      * @throws ParseException if no region of the args string could be found for the index
      * @throws NumberFormatException the args string region is not a valid number
+     * @throws IllegalAccessException 
      */
-    private int parseArgsAsDisplayedRange(String args) throws ParseException, NumberFormatException {
+    private Range parseArgsAsDisplayedRange(String args) throws ParseException, NumberFormatException, IllegalAccessException {
         final Matcher matcher = PERSON_RANGE_ARGS_FORMAT.matcher(args.trim());
+        if (!matcher.matches()) {
+            throw new ParseException("Could not find range to parse");
+        }
         final int startIndex = Integer.parseInt(matcher.group("startIndex"));
         final int endIndex = Integer.parseInt(matcher.group("endIndex"));
+        if (endIndex <= startIndex) {
+            throw new IllegalAccessException("Ending index must be bigger than starting index");
+        }
         return new Range(startIndex, endIndex);
     }
 
