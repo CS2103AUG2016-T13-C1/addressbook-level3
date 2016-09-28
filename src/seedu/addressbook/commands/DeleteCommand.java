@@ -24,6 +24,10 @@ public class DeleteCommand extends Command {
     public DeleteCommand(int targetVisibleIndex) {
         super(targetVisibleIndex);
     }
+    
+    public DeleteCommand(Range targetVisibleRange) {
+        super(targetVisibleRange);
+    }
 
 
     @Override
