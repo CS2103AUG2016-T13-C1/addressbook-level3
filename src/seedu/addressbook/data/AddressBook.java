@@ -17,7 +17,7 @@ import java.util.*;
  */
 public class AddressBook {
 
-    private final UniquePersonList allPersons;
+    private UniquePersonList allPersons;
     private final UniqueTagList allTags; // can contain tags not attached to any person
 
     public static AddressBook empty() {
@@ -157,5 +157,12 @@ public class AddressBook {
     public int hashCode() {
         // use this method for custom fields hashing instead of implementing your own
         return Objects.hash(allPersons, allTags);
+    }
+
+    /**
+     * Sorts the address book in alphabetical order
+     */
+    public void sort() {
+        allPersons.sort();
     }
 }
