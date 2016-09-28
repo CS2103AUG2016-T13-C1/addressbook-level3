@@ -50,12 +50,29 @@ Examples:
 * `find Betsy Tim John`<br>
   Returns Any person having names `Betsy`, `Tim`, or `John`
 
+## Editing a person: `edit`
+Edits a specific detail of the chosen person.
+Format `edit INDEX EDITTYPE/UPDATEDETAIL`
+
+> Edits the person at the specified `INDEX`. 
+  The index refers to the index number shown in the most recent listing.
+
+Examples: 
+* `list`<br>
+  `edit 2 name/william`<br>
+  edits the name of the 2nd person in the address book.
+* `find Betsy`<br> 
+  `edit 1 phone/12345677`<br>
+  edits the phone the 1st person in the results of the `find` command.
+  The index refers to the index number shown in the most recent listing.
+  
+   
+
 ## Deleting a person : `delete`
 Deletes the specified person from the address book. Irreversible.<br>
 Format: `delete INDEX`
 
 > Deletes the person at the specified `INDEX`. 
-  The index refers to the index number shown in the most recent listing.
 
 Examples: 
 * `list`<br>
@@ -64,7 +81,7 @@ Examples:
 * `find Betsy`<br> 
   `delete 1`<br>
   Deletes the 1st person in the results of the `find` command.
-
+  
 ## View non-private details of a person : `view`
 Displays the non-private details of the specified person.<br>
 Format: `view INDEX`
