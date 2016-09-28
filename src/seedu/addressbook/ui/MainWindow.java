@@ -1,11 +1,16 @@
 package seedu.addressbook.ui;
 
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import seedu.addressbook.commands.ExitCommand;
+import seedu.addressbook.commands.UserCommandLog;
 import seedu.addressbook.logic.Logic;
 import seedu.addressbook.commands.CommandResult;
 import seedu.addressbook.data.person.ReadOnlyPerson;
@@ -22,7 +27,9 @@ public class MainWindow {
 
     private Logic logic;
     private Stoppable mainApp;
-
+    
+    private UserCommandLog userCommandLog = new UserCommandLog();
+    
     public MainWindow(){
     }
 
@@ -46,6 +53,7 @@ public class MainWindow {
         try {
             String userCommandText = commandInput.getText();
             CommandResult result = logic.execute(userCommandText);
+            userCommandLog.addCommandToUserLog(userCommandText);
             if(isExitCommand(result)){
                 exitApp();
                 return;
@@ -58,6 +66,44 @@ public class MainWindow {
         }
     }
 
+    /*
+     * Sets up key listeners for both the Up arrow and Down arrow
+     */
+    public void setArrowKeyListener(){
+    	commandInput.setOnKeyPressed(new EventHandler<KeyEvent>()
+        {
+            @Override
+            public void handle(KeyEvent ke){
+                if (ke.getCode().equals(KeyCode.UP)){
+                	//get previous command
+                	String previousCommand = userCommandLog.getPreviousCommand();
+                	commandInput.setText(previousCommand);
+                	
+                	//move cursor caret to the end of the line
+                	Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                             commandInput.positionCaret(previousCommand.length());
+                        }
+                   });
+                }
+                else if(ke.getCode().equals(KeyCode.DOWN)){
+                	//get the next command
+                	String nextCommand = userCommandLog.getNextCommand();
+                	commandInput.setText(nextCommand);
+                	
+                	//move cursor caret to the end of the line
+                	Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                             commandInput.positionCaret(nextCommand.length());
+                        }
+                   });
+                }
+            }
+        });
+    }
+    
     private void exitApp() throws Exception {
         mainApp.stop();
     }
