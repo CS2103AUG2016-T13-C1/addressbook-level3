@@ -1,9 +1,11 @@
 package seedu.addressbook.commands;
 
 import seedu.addressbook.common.Messages;
+import seedu.addressbook.common.Range;
 import seedu.addressbook.data.AddressBook;
 import seedu.addressbook.data.person.ReadOnlyPerson;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static seedu.addressbook.ui.Gui.DISPLAYED_INDEX_OFFSET;
@@ -15,12 +17,22 @@ public abstract class Command {
     protected AddressBook addressBook;
     protected List<? extends ReadOnlyPerson> relevantPersons;
     private int targetIndex = -1;
+    private Range targetRange = null;
+    private boolean hasTargetRange = false;
 
     /**
      * @param targetIndex last visible listing index of the target person
      */
     public Command(int targetIndex) {
         this.setTargetIndex(targetIndex);
+    }
+    
+    /**
+     * @param rangeIndex last visible listing range of the target person
+     */
+    public Command(Range targetRange) {
+        this.setTargetRange(targetRange);
+        this.hasTargetRange = true;
     }
 
     protected Command() {
@@ -57,6 +69,21 @@ public abstract class Command {
     protected ReadOnlyPerson getTargetPerson() throws IndexOutOfBoundsException {
         return relevantPersons.get(getTargetIndex() - DISPLAYED_INDEX_OFFSET);
     }
+    
+    /**
+     * Extracts the the target people in the last shown list from the given arguments.
+     *
+     * @throws IndexOutOfBoundsException if the range is out of bounds of the last viewed listing
+     */
+    protected ArrayList<ReadOnlyPerson> getTargetPersonRange() throws IndexOutOfBoundsException {
+        ArrayList<ReadOnlyPerson> peopleToDelete = new ArrayList<>();
+        Range range = getTargetRange();
+        for (int i = range.getStartIndex(); i < range.getEndIndex() + 1; ++i) {
+            ReadOnlyPerson personToDelete = relevantPersons.get(i - DISPLAYED_INDEX_OFFSET);
+            peopleToDelete.add(personToDelete);
+        }
+        return peopleToDelete;
+    }
 
     public int getTargetIndex() {
         return targetIndex;
@@ -64,5 +91,17 @@ public abstract class Command {
 
     public void setTargetIndex(int targetIndex) {
         this.targetIndex = targetIndex;
+    }
+    
+    public Range getTargetRange() {
+        return targetRange;
+    }
+    
+    public void setTargetRange(Range targetRange) {
+        this.targetRange = targetRange;
+    }
+    
+    public boolean hasTargetRange() {
+        return hasTargetRange;
     }
 }
